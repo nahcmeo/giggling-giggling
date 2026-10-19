@@ -794,6 +794,154 @@
     }
 
     /* Summary / Settlement View */
+    /* Apple Titanium Room Card (3D Tilt & Specular Sheen) */
+    .room-card-wrapper {
+      perspective: 900px;
+      margin-bottom: 16px;
+    }
+
+    .room-card {
+      position: relative;
+      width: 100%;
+      border-radius: 20px;
+      padding: 20px 18px 16px;
+      overflow: hidden;
+      cursor: pointer;
+      user-select: none;
+      transform-style: preserve-3d;
+      transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease;
+      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 45%, #4338ca 100%);
+      color: #ffffff;
+      box-shadow: 0 12px 28px -6px rgba(49, 46, 129, 0.35), 0 4px 10px -2px rgba(49, 46, 129, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+    }
+
+    [data-theme="dark"] .room-card {
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #2e1065 100%);
+      box-shadow: 0 14px 34px -8px rgba(0, 0, 0, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .room-card-shine {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at var(--shine-x, 50%) var(--shine-y, 50%), rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0) 65%);
+      mix-blend-mode: overlay;
+      transition: opacity 0.3s ease;
+      opacity: 0.85;
+    }
+
+    .room-card-content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .room-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .room-card-brand {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: rgba(255, 255, 255, 0.9);
+      text-transform: uppercase;
+    }
+
+    .room-card-cycle {
+      font-size: 11px;
+      font-weight: 650;
+      padding: 3px 9px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .room-card-body {
+      padding: 2px 0;
+    }
+
+    .room-card-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      color: rgba(255, 255, 255, 0.72);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .room-card-amount {
+      font-size: 32px;
+      font-weight: 850;
+      letter-spacing: -0.8px;
+      font-feature-settings: "tnum";
+      line-height: 1.15;
+    }
+
+    .room-card-footer {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .room-card-spectrum {
+      display: flex;
+      height: 6px;
+      border-radius: 6px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.15);
+      gap: 2px;
+    }
+
+    .spectrum-bar {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.5s ease-out;
+    }
+
+    .spectrum-bar.tp { background: #60a5fa; }
+    .spectrum-bar.xt { background: #fbbf24; }
+    .spectrum-bar.hk { background: #34d399; }
+
+    .room-card-legend {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.85);
+      font-feature-settings: "tnum";
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .legend-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+    }
+
+    .legend-dot.tp { background: #60a5fa; }
+    .legend-dot.xt { background: #fbbf24; }
+    .legend-dot.hk { background: #34d399; }
+
     .balance-card-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -1153,6 +1301,43 @@
 
   <!-- TAB 3: TỔNG HỢP & CÔNG NỢ -->
   <section id="tabSummary" class="view">
+    <!-- Apple Titanium Room Card (Thẻ phòng ảo tương tác) -->
+    <div class="room-card-wrapper" id="roomCardWrapper">
+      <div class="room-card" id="roomCard">
+        <div class="room-card-shine" id="roomCardShine"></div>
+        <div class="room-card-content">
+          <div class="room-card-header">
+            <div class="room-card-brand">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.9;">
+                <rect x="2" y="5" width="20" height="14" rx="3"></rect>
+                <line x1="2" y1="10" x2="22" y2="10"></line>
+              </svg>
+              <span>ROOM PASS</span>
+            </div>
+            <span class="room-card-cycle" id="cardCycleLabel">Kỳ hiện tại • 0 khoản</span>
+          </div>
+
+          <div class="room-card-body">
+            <div class="room-card-label">TỔNG CHI TIÊU KỲ NÀY</div>
+            <div class="room-card-amount" id="cardTotalSpending">0 ₫</div>
+          </div>
+
+          <div class="room-card-footer">
+            <div class="room-card-spectrum">
+              <div class="spectrum-bar tp" id="spectrumTP" style="width: 33.33%;"></div>
+              <div class="spectrum-bar xt" id="spectrumXT" style="width: 33.33%;"></div>
+              <div class="spectrum-bar hk" id="spectrumHK" style="width: 33.34%;"></div>
+            </div>
+            <div class="room-card-legend">
+              <div class="legend-item"><span class="legend-dot tp"></span><span>TP <b id="legendPctTP">33%</b></span></div>
+              <div class="legend-item"><span class="legend-dot xt"></span><span>XT <b id="legendPctXT">33%</b></span></div>
+              <div class="legend-item"><span class="legend-dot hk"></span><span>HK <b id="legendPctHK">34%</b></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Thống kê 3 người -->
     <div class="balance-card-grid">
       <div class="person-balance-box tp">
@@ -1968,6 +2153,43 @@
     function renderSummary() {
       const balances = computeBalances();
 
+      // Cập nhật thẻ phòng ảo Apple Titanium Room Card
+      const unsettledTx = appState.transactions.filter(t => !t.isSettled);
+      const totalSpending = unsettledTx.reduce((sum, t) => sum + (t.amount || 0), 0);
+      const countTx = unsettledTx.length;
+
+      const cardTotalEl = document.getElementById('cardTotalSpending');
+      const cardCycleEl = document.getElementById('cardCycleLabel');
+      if (cardTotalEl) cardTotalEl.textContent = formatVND(totalSpending);
+      if (cardCycleEl) cardCycleEl.textContent = `Kỳ hiện tại • ${countTx} khoản`;
+
+      const tpSpent = balances.TP.consumed;
+      const xtSpent = balances.XT.consumed;
+      const hkSpent = balances.HK.consumed;
+      const totalConsumed = (tpSpent + xtSpent + hkSpent) || 1;
+
+      const pTP = Math.round((tpSpent / totalConsumed) * 100);
+      const pXT = Math.round((xtSpent / totalConsumed) * 100);
+      const pHK = Math.max(0, 100 - pTP - pXT);
+
+      const specTP = document.getElementById('spectrumTP');
+      const specXT = document.getElementById('spectrumXT');
+      const specHK = document.getElementById('spectrumHK');
+      if (specTP && specXT && specHK) {
+        specTP.style.width = (totalSpending > 0 ? pTP : 33.33) + '%';
+        specXT.style.width = (totalSpending > 0 ? pXT : 33.33) + '%';
+        specHK.style.width = (totalSpending > 0 ? pHK : 33.34) + '%';
+      }
+
+      const legTP = document.getElementById('legendPctTP');
+      const legXT = document.getElementById('legendPctXT');
+      const legHK = document.getElementById('legendPctHK');
+      if (legTP && legXT && legHK) {
+        legTP.textContent = (totalSpending > 0 ? pTP : 33) + '%';
+        legXT.textContent = (totalSpending > 0 ? pXT : 33) + '%';
+        legHK.textContent = (totalSpending > 0 ? pHK : 34) + '%';
+      }
+
       ['TP', 'XT', 'HK'].forEach(p => {
         const net = balances[p].net;
         const netEl = document.getElementById('net' + p);
@@ -2286,12 +2508,57 @@
       );
     }
 
+    // Apple Room Card 3D Tilt & Specular Shine
+    function setupRoomCardTilt() {
+      const card = document.getElementById('roomCard');
+      const shine = document.getElementById('roomCardShine');
+      if (!card || !shine) return;
+
+      function handleMove(clientX, clientY) {
+        const rect = card.getBoundingClientRect();
+        const x = clientX - rect.left;
+        const y = clientY - rect.top;
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+
+        const rotateX = ((y - centerY) / centerY) * -10;
+        const rotateY = ((x - centerX) / centerX) * 10;
+
+        const shineX = (x / rect.width) * 100;
+        const shineY = (y / rect.height) * 100;
+
+        card.style.transform = `rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale3d(1.02, 1.02, 1.02)`;
+        shine.style.setProperty('--shine-x', `${shineX.toFixed(1)}%`);
+        shine.style.setProperty('--shine-y', `${shineY.toFixed(1)}%`);
+      }
+
+      card.addEventListener('mousemove', (e) => handleMove(e.clientX, e.clientY));
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+        shine.style.setProperty('--shine-x', '50%');
+        shine.style.setProperty('--shine-y', '50%');
+      });
+
+      card.addEventListener('touchmove', (e) => {
+        if (e.touches.length > 0) {
+          handleMove(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: true });
+
+      card.addEventListener('touchend', () => {
+        card.style.transform = 'rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+        shine.style.setProperty('--shine-x', '50%');
+        shine.style.setProperty('--shine-y', '50%');
+      });
+    }
+
     // Thiết lập ngày mặc định là hôm nay
     document.getElementById('txDate').value = new Date().toISOString().split('T')[0];
 
     // Khởi chạy
     initTheme();
     loadState();
+    setupRoomCardTilt();
   </script>
 </body>
 </html>
