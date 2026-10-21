@@ -1402,12 +1402,12 @@
         <span>Sao lưu & An toàn dữ liệu</span>
       </div>
       <div style="font-size: 11px; color: var(--text-muted); line-height: 1.4; margin-bottom: 12px;">
-        Đề phòng khi bạn cần xóa lịch sử Safari hoặc đổi điện thoại, hãy xuất file sao lưu để cất giữ an toàn.
+        Xuất file sao lưu lưu thẳng vào Google Drive hoặc Tệp để không bao giờ sợ mất dữ liệu.
       </div>
       <div style="display: flex; gap: 8px;">
         <button class="btn-secondary" style="flex: 1; padding: 10px 8px; font-size: 13px;" onclick="exportDataJSON()">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-          <span>Xuất file .json</span>
+          <span>Xuất lưu Drive</span>
         </button>
         <button class="btn-secondary" style="flex: 1; padding: 10px 8px; font-size: 13px;" onclick="triggerImportJSON()">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
@@ -2434,11 +2434,34 @@
     }
 
     // --- XUẤT / NHẬP SAO LƯU (BACKUP & RESTORE) ---
-    function exportDataJSON() {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
+    async function exportDataJSON() {
+      const fileName = `tien_phong_backup_${new Date().toISOString().slice(0, 10)}.json`;
+      const jsonContent = JSON.stringify(appState, null, 2);
+      const blob = new Blob([jsonContent], { type: 'application/json' });
+
+      // 1. Dùng Web Share API để mở menu chia sẻ của iOS (chọn Google Drive / Tệp)
+      if (navigator.share) {
+        try {
+          const file = new File([blob], fileName, { type: 'application/json' });
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              files: [file],
+              title: 'Sao lưu Tiền Phòng',
+              text: 'File sao lưu dữ liệu Quản lý tiền phòng'
+            });
+            showToast('Đã mở bảng lưu trữ Drive / Chia sẻ!');
+            return;
+          }
+        } catch (err) {
+          if (err.name === 'AbortError') return; // Người dùng bấm huỷ
+        }
+      }
+
+      // 2. Fallback nếu thiết bị không hỗ trợ share file (tải xuống thông thường)
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(jsonContent);
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `tien_phong_backup_${new Date().toISOString().slice(0, 10)}.json`);
+      downloadAnchor.setAttribute("download", fileName);
       document.body.appendChild(downloadAnchor);
       downloadAnchor.click();
       downloadAnchor.remove();
